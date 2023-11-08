@@ -13,6 +13,9 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.author.username} created post at {self.updated}"
     
+    def get_all_comments(self):
+        return self.comment_set.all()
+    
     class Meta:
         ordering=["-updated"]
     
@@ -29,6 +32,8 @@ class Comment(models.Model):
     
     class Meta:
         ordering=["-updated"]
+
+
 
 
 
