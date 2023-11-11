@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.decorators import login_required
 from post.models import Post
+from django.views.generic import DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
@@ -63,5 +65,17 @@ def user_logout(request):
     return redirect("/profiles/login")
 
 
+class ProfileDetailview(LoginRequiredMixin,DetailView):
+    model=Profile
+    pk_url_kwarg= 'pk'
+    template_name='profiles/profile.html'
+
+@login_required(login_url='/profile/login')
+def get_all_user(request):
+    profiles = Profile.objects.exclude(user=request.user)
+    context= {
+        'profiles':profiles
+    }
+    return render(request, 'profiles/people-list.html',context) 
 
 
