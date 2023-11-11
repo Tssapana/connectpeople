@@ -1,8 +1,9 @@
 from django.shortcuts import render,redirect
 from .forms import LoginForm,SignupForm, UserUpdateForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.decorators import login_required
+from post.models import Post
 
 
 # Create your views here.
@@ -50,8 +51,16 @@ def update_profile(request):
 @login_required(login_url='/profiles/login')
 def get_profile(request):
     profile=Profile.objects.get(user=request.user)
-    context={"profile":profile}
+    posts=Post.objects.filter(author=request.user)
+    post_count=posts.count()
+    context={"profile":profile, "posts":posts, "post_count":post_count}
     return render(request,"profiles/profile.html",context)
+
+
+@login_required(login_url='/profiles/login')
+def user_logout(request):
+    logout(request)
+    return redirect("/profiles/login")
 
 
 
